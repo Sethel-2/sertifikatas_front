@@ -1,0 +1,144 @@
+*{
+    padding: 0;
+    margin:0
+}
+
+
+.background-image {
+    background-image: url('images/background.jpg');
+    background-size: cover;
+    background-position: center;
+    min-height: 100vh;
+}
+
+
+
+li{
+    display:flex;
+    float:left;
+    justify-content: center;
+    text-align: center;
+    
+
+}
+
+ul{
+        display:flex;
+        justify-content: space-around;
+        background-color: whitesmoke;
+        padding: 20px;
+        border:solid;
+        border-width: 1px;
+        border-color: gray;
+        box-sizing: border-box;
+        align-items: center;
+        
+}
+.link1{
+    text-decoration: none;
+}
+
+a.link1{
+    font-size: 24px;
+    font-family: 'Lato', sans-serif;
+    color: black;
+    display:flex;
+    margin: 0;
+    text-align: center;
+ 
+ 
+}
+a:hover{
+    text-decoration: underline;
+    color: blue;
+}
+.pageLogo{
+    display:flex;
+    max-width: 50px;
+    max-height: auto;
+    background-size:contain;
+    background-position: center;
+}
+.filter-text-container{
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-color: whitesmoke;
+    border:solid;
+    border-width: 1px;
+    border-color:black;
+    max-width: 90vh;
+}   
+.dateText{
+    padding:5px;
+    
+}
+.filterButton{
+    float:right;
+    margin-left: 5px;
+}
+.filter-container{
+    margin-bottom:5px;
+   
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  th,
+  td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  th {
+    background-color: #f2f2f2;
+  }
+  
+  tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+
+  .order-table select {
+    width: 100%;
+    max-width: 100%;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    padding: 8px;
+    font-size: 14px;
+  }
+
+  .order-table select option {
+    padding: 8px;
+  }
+
+  .order-table .state-vykdoma {
+    background-color: #fff8dc;
+  }
+
+  .order-table .state-neaktyvi {
+    background-color: #d3d3d3;
+  }
+
+  .order-table .state-atlikta {
+    background-color: #d9ead3;
+  }
+
+  .filter-and-button-container {
+    display: flex;
+    justify-content:space-between;
+  }
+  .filter-text-container {
+    position: relative;
+  }
+  
+  .createOrderButton {
+    position: absolute;
+    top: 120px;
+    right: 100px;
+  }

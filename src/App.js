@@ -1,24 +1,34 @@
-import logo from './logo.svg';
+import { Route, Routes } from 'react-router-dom';
 import './App.css';
+import LoginForm from './components/loginForm.js';
+import React from 'react';
+import RegistrationForm from './components/registrationForm';
+import RemindForm from './components/remindForm';
+import HomePage from './components/homePage';
+import OrderPage from './components/orderPage';
+import SettingsPage from './components/settingsPage';
+import CertificatePage from './components/certificatePage';
+import ClientPage from './components/clientPage';
+
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+    
+    <Routes>
+      <Route path = "/" element={<LoginForm/>}/>
+      <Route path = "/registration" element={<RegistrationForm/>}/>
+      <Route path = "/reminder" element= {<RemindForm/>}/>
+      <Route path = "/home" element= {<HomePage/>}/>
+      <Route path = "/order" element= {<OrderPage/>}/>
+      <Route path = "/certificate" element= {<CertificatePage/>}/>
+      <Route path = "/client" element= {<ClientPage/>}/>
+      <Route path = "/settings" element= {<SettingsPage/>}/>
+    </Routes>
+    </>
+      
+      
+  
   );
 }
 
