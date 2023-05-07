@@ -1,0 +1,18 @@
+.input-field {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+  }
+  
+  .input-field input[type="text"] {
+    padding: 0.5rem;
+    font-size: 1rem;
+    border-radius: 0.25rem;
+    border: 1px solid #ccc;
+    outline: none;
+  }
+  
+  .input-field input[type="text"]:focus {
+    border-color: #0077ff;
+    box-shadow: 0 0 0 2px rgba(0, 119, 255, 0.3);
+  }

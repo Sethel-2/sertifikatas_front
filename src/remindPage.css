@@ -43,6 +43,7 @@
       
       label {
         margin-bottom: 10px;
+        text-align: center;
       }
       
       input {
@@ -80,19 +81,4 @@
         height: 100px;
         width: 100px;
       }
-     .link{
-      padding: 1px;
-      margin-top: 5px;
-      background-color: #007bff;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      text-align: center;
-      
-     }
-     .link:hover{
-      background-color: #0062cc;
-     }
-     
-     
+   

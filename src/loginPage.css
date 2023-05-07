@@ -41,34 +41,8 @@
         border-radius: 5px;
       }
       
-      label {
-        margin-bottom: 10px;
-        text-align: center;
-      }
-      
-      input {
-        padding: 11px;
-        margin-bottom: 10px;
-        box-sizing: border-box;
-      }
-      
-      button {
-        padding: 8px;
-        margin-top: 5px;
-        background-color: #007bff;
-        color: #fff;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-      }
-      
-      button:hover {
-        background-color: #0062cc;
-      }
-      button:last-of-type {
-        margin-bottom: 0;
-      }
-
+    
+ 
       .logo-container {
         display: flex;
         justify-content: center;
@@ -81,19 +55,5 @@
         height: 100px;
         width: 100px;
       }
-     .link{
-      padding: 1px;
-      margin-top: 5px;
-      background-color: #007bff;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      text-align: center;
-      
-     }
-     .link:hover{
-      background-color: #0062cc;
-     }
-     
+    
      

@@ -40,36 +40,7 @@
         border: 1px solid #ccc;
         border-radius: 5px;
       }
-      
-      label {
-        margin-bottom: 10px;
-      }
-      
-      input {
-        padding: 11px;
-        margin-bottom: 10px;
-        box-sizing: border-box;
-      }
-      
-      button {
-        padding: 10px;
-        margin-top: 5px;
-        background-color: #007bff;
-        color: #fff;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        justify-content: center;
-        text-align: center; 
-        
-      }
-      
-      button:hover {
-        background-color: #0062cc;
-      }
-      button:last-of-type {
-        margin-bottom: 0;
-      }
+ 
 
       .logo-container {
         display: flex;
@@ -83,17 +54,4 @@
         height: 100px;
         width: 100px;
       }
-      .returnLogin{
-        padding-top:10px;
-        justify-content: center;
-        text-align: center;
-        color:#0062cc;
-        cursor: pointer;
-      }
-
-      .returnLogin:hover{
-        color:purple;
-      }
-
-      
-       
+ 

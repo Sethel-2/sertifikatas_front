@@ -1,27 +1,25 @@
 import { Route, Routes } from 'react-router-dom';
-import './App.css';
-import LoginForm from './components/loginForm.js';
+import LoginForm from './pages/loginPage';
 import React from 'react';
-import RegistrationForm from './components/registrationForm';
-import RemindForm from './components/remindForm';
-import HomePage from './components/homePage';
-import OrderPage from './components/orderPage';
-import SettingsPage from './components/settingsPage';
-import CertificatePage from './components/certificatePage';
-import ClientPage from './components/clientPage';
+import RegistrationForm from './pages/registrationPage';
+import RemindForm from './pages/remindPage';
+import HomePage from './pages/homePage';
+import OrderPage from './pages/orderPage';
+import SettingsPage from './pages/settingsPage';
+import ClientPage from './pages/clientPage';
+
 
 
 function App() {
   return (
     <>
-    
+      
     <Routes>
       <Route path = "/" element={<LoginForm/>}/>
       <Route path = "/registration" element={<RegistrationForm/>}/>
       <Route path = "/reminder" element= {<RemindForm/>}/>
       <Route path = "/home" element= {<HomePage/>}/>
       <Route path = "/order" element= {<OrderPage/>}/>
-      <Route path = "/certificate" element= {<CertificatePage/>}/>
       <Route path = "/client" element= {<ClientPage/>}/>
       <Route path = "/settings" element= {<SettingsPage/>}/>
     </Routes>
