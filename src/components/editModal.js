@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import Modal from "react-modal";
 import "./editModal.css";
 import Button from "./button";
+
 Modal.setAppElement("#root");
 
-const EditOrderModal = ({ isOpen, closeModal }) => {
+const EditOrderModal = ({ isOpen, closeModal, onSave }) => {
   const [selectedClient, setSelectedClient] = useState("");
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [notes, setNotes] = useState("");
@@ -14,11 +15,18 @@ const EditOrderModal = ({ isOpen, closeModal }) => {
     setUploadedFiles([...uploadedFiles, file]);
   };
 
-  const handleFileDownload = (fileName) => {
-    // Add code here to download the file
+  const handleFileDownload = (file) => {
+    const url = URL.createObjectURL(file);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", file.name);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const handleSave = () => {
+    onSave(selectedClient, notes);
     closeModal();
   };
 
@@ -52,7 +60,7 @@ const EditOrderModal = ({ isOpen, closeModal }) => {
             {uploadedFiles.length > 0 ? (
               uploadedFiles.map((file, index) => (
                 <li key={index}>
-                  <a href="fileDownloadHref" onClick={() => handleFileDownload(file.name)}>
+                  <a href="file-download" onClick={() => handleFileDownload(file)}>
                     {file.name}
                   </a>
                 </li>
@@ -64,12 +72,14 @@ const EditOrderModal = ({ isOpen, closeModal }) => {
         </div>
         <label>
           Pastabos:
-          <textarea value={notes} onChange={(e) => setNotes(e.target.value)}></textarea>
+          <textarea
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+          ></textarea>
         </label>
         <div className="buttons-container">
-        <Button text="Save" onClick={handleSave} />
-        <Button text="Close" onClick={closeModal} />
-           
+          <Button text="Save" onClick={handleSave} />
+          <Button text="Close" onClick={closeModal} />
         </div>
       </form>
     </Modal>
@@ -77,3 +87,4 @@ const EditOrderModal = ({ isOpen, closeModal }) => {
 };
 
 export default EditOrderModal;
+

@@ -4,19 +4,21 @@ import "./addOrderModal.css";
 
 Modal.setAppElement("#root");
 
-const AddOrderModal = ({ isOpen, closeModal }) => {
+const AddOrderModal = ({ isOpen, closeModal, handleAddOrder }) => {
   const [selectedClient, setSelectedClient] = useState("");
   const [notes, setNotes] = useState("");
 
   const handleSave = () => {
-    // Add code to save the new order to the table
+    const newOrder = { client: selectedClient, notes: notes };
+    handleAddOrder(newOrder);
     closeModal();
   };
+  
 
   return (
     <Modal
       isOpen={isOpen}
-      onRequestClose={closeModal}
+      //onRequestClose={closeModal}
       contentLabel="Add Order Modal"
     >
       <h2>Add Order</h2>
@@ -28,9 +30,9 @@ const AddOrderModal = ({ isOpen, closeModal }) => {
             onChange={(e) => setSelectedClient(e.target.value)}
           >
             <option value="">Select a client</option>
-            <option value="Client A">Client A</option>
-            <option value="Client B">Client B</option>
-            <option value="Client C">Client C</option>
+            <option value="Šarūnas Bieliūnas">Šarūnas Bieliūnas</option>
+            <option value="Domas Morkūnas">Domas Morkūnas</option>
+            <option value="Dovilė Štriūnaitė">Dovilė Štriūnaitė</option>
           </select>
         </label>
         <label>
@@ -41,7 +43,7 @@ const AddOrderModal = ({ isOpen, closeModal }) => {
           ></textarea>
         </label>
         <div className="buttons-container">
-          <button onClick={handleSave}>Save</button>
+          <button onClick={ handleSave}>Save</button>
           <button onClick={closeModal}>Cancel</button>
         </div>
       </form>
