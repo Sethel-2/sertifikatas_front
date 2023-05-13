@@ -5,29 +5,40 @@ import CertificateUploadButton from '../components/certificateUploadButton';
 import React, {useState, useEffect} from 'react';
 import AddOrderModal from '../components/addOrderModal';
 import Button from '../components/button';
-import EditOrderModal from '../components/editModal';
-
-
-
+import { getUser } from '../utils/storage';
 
 function OrderPage() {
 
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   
-
+  const user = getUser()
+  const isCertificator = user && user.role === "certificator"
   const [orders, setOrders] = useState([
     {
       id: '202305091',
+      clientId: '645bf5b722fee3038476330b',
       client: 'Artūras Sabaliauskas',
       notes: 'Trūksta katalizatoriaus',
-      state: 'Vykdoma',
-      certificate: <CertificateUploadButton onUpload={(file) => console.log(file)} />,
+      state: 'Nepradėta',
+      certificate: null,
+      additionalFiles: [],
       createdAt: '2023-05-09',
     },
-  ]);
-
+    {
+      id: '202305091',
+      clientId: '645c0ba022fee30384763321',
+      client: 'Benas Rubliovas',
+      notes: 'Trūksta nuotraukų',
+      state: 'Vykdoma',
+      certificate: null,
+      additionalFiles: [],
+      createdAt: '2023-05-09',
+    }
+  ].filter(order => isCertificator?true: order.clientId === user._id));
+  console.log(orders);
   const [originalOrders, setOriginalOrders] = useState([]);
 
   // Copy the initial orders to originalOrders when the component mounts
@@ -38,6 +49,9 @@ function OrderPage() {
   const handleStartDateChange = (event) => {
     setStartDate(event.target.value);
   };
+  const handleSearchQueryChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
 
   const handleEndDateChange = (event) => {
     setEndDate(event.target.value);
@@ -46,7 +60,12 @@ function OrderPage() {
   const handleFilterClick = () => {
     const filteredOrders = originalOrders.filter((order) => {
       const orderDate = new Date(order.createdAt);
-      return orderDate >= new Date(startDate) && orderDate <= new Date(endDate);
+      return (
+        orderDate >= new Date(startDate) &&
+        orderDate <= new Date(endDate) &&
+        (order.client.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          order.clientId.toLowerCase().includes(searchQuery.toLowerCase()))
+      );
     });
     setOrders(filteredOrders);
   };
@@ -78,8 +97,16 @@ function OrderPage() {
 
   return (
     <div className="background-image">
-      <Navbar/>
-      <div className="filter-section">
+    <Navbar />
+    <div className="filter-section">
+      <label htmlFor="search-query">Ieškoti užsakymo:</label>
+      <input
+        type="text"
+        id="search-query"
+        value={searchQuery}
+        onChange={handleSearchQueryChange}
+        placeholder="Įveskite klientą"
+      />
         <label htmlFor="start-date">Pradžios data:</label>
         <input type="date" id="start-date" value={startDate} onChange={handleStartDateChange} />
 
@@ -88,7 +115,7 @@ function OrderPage() {
 
         <Button text="Filtruoti" onClick={handleFilterClick} />
         <Button text="Rodyti visus" onClick={handleShowAll} />
-        <Button text="Pridėti užsakymą" onClick={handleAddOrderClick} />
+        {isCertificator?<Button text="Pridėti užsakymą" onClick={handleAddOrderClick} />:null}
       </div>
 
       <OrderTable orders={orders} headers={headers} setTableOrders={(tableOrders)=>{setOrders(tableOrders)}} updateOrder={(updatedOrder)=>{setOrders(orders.map(order=>order.id===updatedOrder.id ? updatedOrder : order))}}/>

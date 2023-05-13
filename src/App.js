@@ -7,19 +7,21 @@ import HomePage from './pages/homePage';
 import OrderPage from './pages/orderPage';
 import SettingsPage from './pages/settingsPage';
 import ClientPage from './pages/clientPage';
-
+import { ToastContainer} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import PrivateRoute from './utils/privateRoute';
 
 
 function App() {
   return (
     <>
-      
+      <ToastContainer/>
     <Routes>
       <Route path = "/" element={<LoginForm/>}/>
       <Route path = "/registration" element={<RegistrationForm/>}/>
       <Route path = "/reminder" element= {<RemindForm/>}/>
       <Route path = "/home" element= {<HomePage/>}/>
-      <Route path = "/order" element= {<OrderPage/>}/>
+      <Route path = "/order" element = {PrivateRoute(<OrderPage/>)}/>
       <Route path = "/client" element= {<ClientPage/>}/>
       <Route path = "/settings" element= {<SettingsPage/>}/>
     </Routes>

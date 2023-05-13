@@ -1,28 +1,45 @@
 import React, { useState } from 'react';
 import './orderTable.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrashAlt, faEdit } from '@fortawesome/free-solid-svg-icons';
+import { faTrashAlt, faEdit, faUpload } from '@fortawesome/free-solid-svg-icons';
 import EditOrderModal from './editModal';
+import CertificateUploadButton from './certificateUploadButton';
+import UploadFileModal from './uploadFileModal';
+import { getUser } from '../utils/storage';
 
 
 
-function OrderTable({ headers, orders, setTableOrders }) {
+function OrderTable({ headers, orders, setTableOrders, updateOrder }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
+    setIsUploadModalOpen(false);
   };
+  const user = getUser()
+  const isCertificator = user && user.role === "certificator"
 
   const handleEditOrder = (order) => {
     setSelectedOrder(order);
     setIsModalOpen(true);
   };
+  const handleUploadModal = (order) => {
+    setSelectedOrder(order);
+    setIsUploadModalOpen(true);
+  };
+
 
   const handleStatusChange = (order, event) => {
     const updatedOrder = { ...order, state: event.target.value };
     const updatedOrders = orders.map((o) => (o.id === order.id ? updatedOrder : o));
+    setTableOrders(updatedOrders);
+  };
+
+  const handleDeleteOrder = (order) => {
+    const updatedOrders = orders.filter((o) => o.id !== order.id);
     setTableOrders(updatedOrders);
   };
   
@@ -31,9 +48,11 @@ function OrderTable({ headers, orders, setTableOrders }) {
       <table>
         <thead>
           <tr>
-            {headers.map((header) => (
-              <th key={header}>{header}</th>
-            ))}
+            {headers.map((header) => {
+            if(header === "Klientas" && !isCertificator) return null
+            return  <th key={header}>{header}</th>
+            }
+            )}
             <th></th>
           </tr>
         </thead>
@@ -41,9 +60,9 @@ function OrderTable({ headers, orders, setTableOrders }) {
           {orders.map((order) => (
             <tr key={order.id}>
               {Object.keys(order).map((key) => {
-                if (key === 'state') {
+                if (key === 'state' && isCertificator) {
                   return (
-                    <td key={key}>
+                    <td key={`${order.id}_${key}`}>
                       <select
                         className={`status status-${order.state.toLowerCase()}`}
                         value={order.state}
@@ -62,16 +81,33 @@ function OrderTable({ headers, orders, setTableOrders }) {
                     </td>
                   );
                 }
-                return <td key={key}>{order[key]}</td>;
+                if (key === "certificate"){
+                  return <td key = {`${order.id}_${key}`}>
+                    <CertificateUploadButton onUpload={(file) => {
+                    updateOrder({...order, certificate:file})
+                  }} />
+                  </td>
+                }
+                if(key === "client" && !isCertificator) return null;
+                if (key === "additionalFiles") return null;
+                if (key === "clientId") return null;
+                
+                return <td key={`${order.id}_${key}`}>{order[key]}</td>;
               })}
               <td className="action-column">
               <div className="button-container">
-                <button className="edit-button" onClick={() => handleEditOrder(order)}>
+                <button className="upload-button" onClick = {() => handleUploadModal(order)}>
+                  <FontAwesomeIcon icon={faUpload} />
+                </button>
+                {isCertificator? <button className="edit-button" onClick={() => handleEditOrder(order)}>
                   <FontAwesomeIcon icon={faEdit} />
-                </button>
-                <button className="delete-button">
+                </button>:null}
+               
+                
+                {isCertificator? <button className="delete-button" onClick ={() => handleDeleteOrder(order)}>
                   <FontAwesomeIcon icon={faTrashAlt} />
-                </button>
+                </button>:null}
+               
                 </div>
               </td>
             </tr>
@@ -83,12 +119,25 @@ function OrderTable({ headers, orders, setTableOrders }) {
           isOpen={isModalOpen}
           closeModal={handleCloseModal}
           order={selectedOrder}
-          onSave={(editedOrder) => {
-            console.log(editedOrder);
-            // handle saving the edited order object here
+          onSave={(updatedOrder) => {
+          updateOrder(updatedOrder)
           }}
         />
+
       )}
+      {selectedOrder && (
+        <UploadFileModal
+          isOpen={isUploadModalOpen}
+          closeModal={handleCloseModal}
+          order={selectedOrder}
+          onSave={(updatedOrder) => {
+          updateOrder(updatedOrder)
+         
+          }}
+        />
+
+      )}
+      
     </div>
   );
 }

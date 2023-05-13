@@ -6,10 +6,8 @@ import Button from "./button";
 
 Modal.setAppElement("#root");
 
-const EditOrderModal = ({ isOpen, closeModal, onSave, order }) => {
-  const [selectedClient, setSelectedClient] = useState("");
-  const [uploadedFiles, setUploadedFiles] = useState([]);
-  const [notes, setNotes] = useState("");
+const UploadFileModal = ({ isOpen, closeModal, onSave, order }) => {
+  const [uploadedFiles, setUploadedFiles] = useState([...order.additionalFiles]);
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
@@ -28,13 +26,8 @@ const EditOrderModal = ({ isOpen, closeModal, onSave, order }) => {
 
   const handleSave = () => {
     const updatedOrder=  {
-      id: order.id,
-      client:  selectedClient ? selectedClient:order.client,
-      notes: notes ? notes:order.notes,
-      state: order.state,
-      certificate: order.certificate,
+      ...order,
       additionalFiles: uploadedFiles,
-      createdAt: order.createdAt
     };                    
     onSave(updatedOrder);
     closeModal();
@@ -46,33 +39,28 @@ const EditOrderModal = ({ isOpen, closeModal, onSave, order }) => {
       onRequestClose={closeModal}
       contentLabel="Edit Order Modal"
     >
-      <h2>Redaguoti užsakymą</h2>
+      <h2>Papildomi failai</h2>
       <form>
         <label>
-          Klientai:
-          <select
-            value={selectedClient}
-            onChange={(e) => setSelectedClient(e.target.value)}
-          >
-            <option value="">Pasirinkti klientą</option>
-            <option value="Benas Jarsolavičius">Benas Jarsolavičius</option>
-            <option value="Tada Jasinskis">Tada Jasinskis</option>
-            <option value="Rokas Lukoševičius">Rokas Lukoševičius</option>
-          </select>
+          Įkelti failus:
+          <input type="file" onChange={handleFileUpload} />
         </label>
-        
         <div className="uploaded-files-container">
-         
-            
-        
+          <h3>Įkelti failai:</h3>
+          <ul className="uploaded-files-list">
+            {uploadedFiles.length > 0 ? (
+              uploadedFiles.map((file, index) => (
+                <li key={index}>
+                  <a href="file-download" onClick={() => handleFileDownload(file)}>
+                    {file.name}
+                  </a>
+                </li>
+              ))
+            ) : (
+              <li>Nėra failų</li>
+            )}
+          </ul>
         </div>
-        <label>
-          Pastabos:
-          <textarea
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-          ></textarea>
-        </label>
         <div className="buttons-container">
           <Button text="Išsaugoti" onClick={handleSave} />
           <Button text="Uždaryti" onClick={closeModal} />
@@ -82,5 +70,4 @@ const EditOrderModal = ({ isOpen, closeModal, onSave, order }) => {
   );
 };
 
-export default EditOrderModal;
-
+export default UploadFileModal;

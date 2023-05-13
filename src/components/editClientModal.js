@@ -1,69 +1,53 @@
 import React, { useState } from 'react';
-import '../clientPage.css';
-import Navbar from '../components/navbar';
-import FilterSection from '../components/dateFilter';
-import ClientTable from '../components/clientTable';
-import EditClientModal from '../components/editClientModal';
+import Modal from 'react-modal';
+import './editClientModal.css';
 
-function ClientPage() {
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [selectedClient, setSelectedClient] = useState(null);
+Modal.setAppElement('#root');
 
-  const handleOpenEditModal = (client) => {
-    setSelectedClient(client);
-    setIsEditModalOpen(true);
-  };
-  
-  const handleCloseEditModal = () => {
-    setSelectedClient(null);
-    setIsEditModalOpen(false);
+function EditClientModal({ isOpen, closeModal, client, onSave }) {
+ 
+  const [editedClient, setEditedClient] = useState(client);
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setEditedClient((prevClient) => ({
+      ...prevClient,
+      [name]: name === 'id' ? prevClient.id : value,
+    }));
   };
 
-  const handleFilter = (startDate, endDate) => {
-    // handle filtering logic here
+  const handleSaveClick = () => {
+    onSave(editedClient);
+    closeModal();
   };
-
-  const handleShowAll = () => {
-    // handle showing all orders logic here
-  };
-
-  const clients = [
-    {
-      id: '1',
-      firstName: 'Artūras',
-      lastName: 'Sabaliauskas',
-      email: 'a.sabaliauskas@gmail.com',
-      phone: '+3706857111',
-      createdAt: '2023-05-02',
-    },
-    // Add more clients here
-  ];
-
-  const headers = ['ID', 'Vardas', 'Pavardė','El.paštas', 'Telefono Nr.', 'Sūkurta'];
-
+ 
   return (
-    <div className="background-image">
-       <Navbar/>
-       <FilterSection
-        handleFilter={handleFilter}
-        handleShowAll={handleShowAll}
-        addButtonLabel="Pridėti klientą"
-        handleAdd={() => handleOpenEditModal(null)}
-      />
-      <ClientTable clients={clients} headers={headers} onEdit={handleOpenEditModal} />
-      {isEditModalOpen && (
-        <EditClientModal
-          isOpen={isEditModalOpen}
-          closeModal={handleCloseEditModal}
-          client={selectedClient}
-          onSave={(editedClient) => {
-            console.log(editedClient);
-            // handle saving the edited client object here
-          }}
-        />
-      )}
-    </div>
+    <Modal className="edit-client-modal" overlayClassName="edit-client-overlay" isOpen={isOpen} onRequestClose={closeModal}>
+      <h2 className="edit-client-heading">Edit Client</h2>
+      <form>
+        <div className="edit-client-input-group">
+          <label htmlFor="firstName" className="edit-client-label">Vardas:</label>
+          <input type="text" id="firstName" name="firstName" value={editedClient.firstName} onChange={handleInputChange} className="edit-client-input" />
+        </div>
+        <div className="edit-client-input-group">
+          <label htmlFor="lastName" className="edit-client-label">Pavardė:</label>
+          <input type="text" id="lastName" name="lastName" value={editedClient.lastName} onChange={handleInputChange} className="edit-client-input" />
+        </div>
+        <div className="edit-client-input-group">
+          <label htmlFor="email" className="edit-client-label">El. paštas:</label>
+          <input type="email" id="email" name="email" value={editedClient.email} onChange={handleInputChange} className="edit-client-input" />
+        </div>
+        <div className="edit-client-input-group">
+          <label htmlFor="phone" className="edit-client-label">Telefono numeris:</label>
+          <input type="tel" id="phone" name="phone" value={editedClient.phone} onChange={handleInputChange} className="edit-client-input" />
+        </div>
+      </form>
+      <div className = "save-edit-container">
+      <button onClick={handleSaveClick} className="edit-client-save-btn">Save</button>
+      <button onClick={closeModal} className="edit-client-cancel-btn">Cancel</button>
+      </div>
+    </Modal>
   );
 }
 
-export default ClientPage;
+export default EditClientModal;

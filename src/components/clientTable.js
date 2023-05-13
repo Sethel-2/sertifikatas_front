@@ -4,18 +4,25 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt, faEdit } from '@fortawesome/free-solid-svg-icons';
 import EditClientModal from './editClientModal';
 
-function ClientTable({ clients, headers, onEdit }) {
+function ClientTable({ clients, headers, onEdit, setClients }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedClient, setSelectedClient] = useState(null);
+  const [selectedClient] = useState(null);
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
 
   const handleEditClient = (client) => {
-    setSelectedClient(client);
-    setIsModalOpen(true);
+    onEdit(client);
   };
+
+  
+  const handleDeleteOrder = (client) => {
+    const updatedClients = clients.filter((o) => o.id !== client.id);
+    setClients(updatedClients);
+  };
+  
+  
 
   return (
     <div className="client-table">
@@ -35,13 +42,17 @@ function ClientTable({ clients, headers, onEdit }) {
                 <td key={key}>{client[key]}</td>
               ))}
               <td className="action-column">
-                <button className="edit-button" onClick={() => onEdit(client)}>
+              <div className="button-container">
+                <button className="edit-button" onClick={() => handleEditClient(client)}>
                   <FontAwesomeIcon icon={faEdit} />
                 </button>
-                <button className="delete-button">
+                <button className="delete-button" onClick ={() => handleDeleteOrder(client)}>
                   <FontAwesomeIcon icon={faTrashAlt} />
                 </button>
+              
+                </div>
               </td>
+              
             </tr>
           ))}
         </tbody>
@@ -52,8 +63,8 @@ function ClientTable({ clients, headers, onEdit }) {
           closeModal={handleCloseModal}
           client={selectedClient}
           onSave={(editedClient) => {
-            console.log(editedClient);
-            // handle saving the edited client object here
+          
+            
           }}
         />
       )}

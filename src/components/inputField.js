@@ -1,11 +1,11 @@
 import React from "react";
 import "./inputField.css";
 
-const InputField = ({ id, name}) => {
+const InputField = ({ id, name, value, onChange, type}) => {
   return (
     <div className="input-field">
       
-      <input type="text" id={id} name={name} />
+      <input type = {type?type:"text"} value = {value} onChange = {onChange} id={id} name={name} />
     </div>
   );
 };
