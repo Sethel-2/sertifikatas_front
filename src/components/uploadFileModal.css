@@ -1,0 +1,21 @@
+.file-label{
+   
+    text-align: center;
+    
+}
+.uploaded-files-list li {
+    border-bottom: 2px solid #000000;
+    padding: 5px 0;
+    width: 100%;
+    display:flex;
+    align-items: center;
+  }
+  .file-info{
+    display:flex;
+    float:right;
+  }
+  .uploaded-files-list li a {
+   margin-right:80px;
+    
+  }
+  

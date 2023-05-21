@@ -3,20 +3,21 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
 import "./certificateUploadButton.css";
 
-function CertificateUploadButton({ onUpload }) {
-  const [certificateFiles, setCertificateFiles] = useState([]);
-
+function CertificateUploadButton({ onUpload, file }) {
+  const [certificateFiles, setCertificateFiles] = useState
+  ([]);
+  
   const handleFileChange = (event) => {
     const files = Array.from(event.target.files);
     setCertificateFiles(files);
-    onUpload(files);
+    //onUpload(files);
   };
 
   const handleDeleteFile = (index) => {
     const newFiles = [...certificateFiles];
     newFiles.splice(index, 1);
     setCertificateFiles(newFiles);
-    onUpload(newFiles);
+   // onUpload(newFiles);
   };
 
   const handleIconClick = () => {
@@ -43,18 +44,22 @@ function CertificateUploadButton({ onUpload }) {
       />
       {certificateFiles.length > 0 ? (
         <div style={{ maxHeight: "40px", overflowY: "auto" }}>
-          {certificateFiles.map((file, index) => (
-            <div key={index}>
-              <a href={URL.createObjectURL(file)} download={file.name}>
-                <p>{formatFileName(file.name)}</p>
-              </a>
-              <FontAwesomeIcon
-                icon={faTimes}
-                onClick={() => handleDeleteFile(index)}
-                style={{ cursor: "pointer" }}
-              />
-            </div>
-          ))}
+          {certificateFiles.map((file, index) => {
+            if(!file) return null;
+            console.log(file)
+            return <div key={index}>
+            <a href={URL.createObjectURL(file)} download={file.name}>
+              <p>{formatFileName(file.name)}</p>
+            </a>
+            <FontAwesomeIcon
+              icon={faTimes}
+              onClick={() => handleDeleteFile(index)}
+              style={{ cursor: "pointer" }}
+            />
+          </div>
+          }
+           
+         )}
         </div>
       ) : (
         <FontAwesomeIcon

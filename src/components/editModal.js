@@ -6,35 +6,22 @@ import Button from "./button";
 
 Modal.setAppElement("#root");
 
-const EditOrderModal = ({ isOpen, closeModal, onSave, order }) => {
-  const [selectedClient, setSelectedClient] = useState("");
-  const [uploadedFiles, setUploadedFiles] = useState([]);
-  const [notes, setNotes] = useState("");
-
-  const handleFileUpload = (event) => {
-    const file = event.target.files[0];
-    setUploadedFiles([...uploadedFiles, file]);
+const EditOrderModal = ({ isOpen, closeModal, onSave, order, clients }) => {
+  const [selectedClient, setSelectedClient] = useState(order.client._id);
+  const [notes, setNotes] = useState(order.notes);
+  const [state, setState] = useState(order.state);
+  console.log(clients, selectedClient);
+  const handleStatusChange = (event) => {
+   
+    setState(event.target.value);
   };
-
-  const handleFileDownload = (file) => {
-    const url = URL.createObjectURL(file);
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", file.name);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
+  console.log(order);
   const handleSave = () => {
     const updatedOrder=  {
-      id: order.id,
-      client:  selectedClient ? selectedClient:order.client,
-      notes: notes ? notes:order.notes,
-      state: order.state,
-      certificate: order.certificate,
-      additionalFiles: uploadedFiles,
-      createdAt: order.createdAt
+      ...order,
+      notes: notes,
+      state: state,
+      client: selectedClient,
     };                    
     onSave(updatedOrder);
     closeModal();
@@ -53,11 +40,10 @@ const EditOrderModal = ({ isOpen, closeModal, onSave, order }) => {
           <select
             value={selectedClient}
             onChange={(e) => setSelectedClient(e.target.value)}
+            
           >
-            <option value="">Pasirinkti klientą</option>
-            <option value="Benas Jarsolavičius">Benas Jarsolavičius</option>
-            <option value="Tada Jasinskis">Tada Jasinskis</option>
-            <option value="Rokas Lukoševičius">Rokas Lukoševičius</option>
+            
+            {clients.map((client) => <option value= {client._id}>{client.fullName}</option>)}
           </select>
         </label>
         
@@ -66,6 +52,23 @@ const EditOrderModal = ({ isOpen, closeModal, onSave, order }) => {
             
         
         </div>
+        <label> Būsena:
+        <select
+                        className={`status status-${order.state.toLowerCase()}`}
+                        value={state}
+                        onChange={(event) => handleStatusChange(event)}
+                      >
+                        <option className="status-not-started" value="Nepradėta">
+                          Nepradėta
+                        </option>
+                        <option className="status-in-progress" value="Vykdoma">
+                          Vykdoma
+                        </option>
+                        <option className="status-completed" value="Užbaigta">
+                          Užbaigta
+                        </option>
+                      </select>
+        </label>
         <label>
           Pastabos:
           <textarea
@@ -73,10 +76,14 @@ const EditOrderModal = ({ isOpen, closeModal, onSave, order }) => {
             onChange={(e) => setNotes(e.target.value)}
           ></textarea>
         </label>
+        
         <div className="buttons-container">
-          <Button text="Išsaugoti" onClick={handleSave} />
-          <Button text="Uždaryti" onClick={closeModal} />
+
+
+          <Button className = "link1" text="Išsaugoti" onClick={handleSave} />
+          <Button className = "link1" text="Uždaryti" onClick={closeModal} />
         </div>
+        
       </form>
     </Modal>
   );

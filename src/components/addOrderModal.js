@@ -4,12 +4,12 @@ import "./addOrderModal.css";
 
 Modal.setAppElement("#root");
 
-const AddOrderModal = ({ isOpen, closeModal, handleAddOrder }) => {
-  const [selectedClient, setSelectedClient] = useState("");
+const AddOrderModal = ({ isOpen, closeModal, handleAddOrder, clients }) => {
+  const [selectedClient, setSelectedClient] = useState(clients.length > 0 ? clients[0]._id : "");
   const [notes, setNotes] = useState("");
-
+//to do: replace client id with selected client
   const handleSave = () => {
-    const newOrder = { client: selectedClient, notes: notes };
+    const newOrder = { client: selectedClient, notes: notes, createdAt: new Date()};
     handleAddOrder(newOrder);
     closeModal();
   };
@@ -27,12 +27,8 @@ const AddOrderModal = ({ isOpen, closeModal, handleAddOrder }) => {
           Klientai:
           <select
             value={selectedClient}
-            onChange={(e) => setSelectedClient(e.target.value)}
-          >
-            <option value="">Pasirinkti klientą</option>
-            <option value="Šarūnas Bieliūnas">Šarūnas Bieliūnas</option>
-            <option value="Domas Morkūnas">Domas Morkūnas</option>
-            <option value="Dovilė Štriūnaitė">Dovilė Štriūnaitė</option>
+            onChange={(e) => setSelectedClient(e.target.value)}>
+            {clients.map((client) => <option value= {client._id}>{client.fullName}</option>)}
           </select>
         </label>
         <label>
@@ -43,8 +39,8 @@ const AddOrderModal = ({ isOpen, closeModal, handleAddOrder }) => {
           ></textarea>
         </label>
         <div className="buttons-container">
-          <button onClick={ handleSave}>Išsaugoti</button>
-          <button onClick={closeModal}>Atšaukti</button>
+          <button className = "link1" onClick={ handleSave}>Išsaugoti</button>
+          <button className = "link1" onClick={closeModal}>Atšaukti</button>
         </div>
       </form>
     </Modal>

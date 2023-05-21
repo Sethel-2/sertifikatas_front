@@ -2,16 +2,13 @@
     background-image: url('images/background.jpg');
     background-size: cover;
     background-position: center;
-    min-height: 100vh;
   }
   
   * {
     box-sizing: border-box;
   }
   
-  body {
-    overflow: hidden;
-  }
+
   
   .settings-form {
     

@@ -17,8 +17,8 @@ function RemindForm() {
         <div className="text">
           <TextLabel>Slaptažodžio priminimas</TextLabel>
         </div>
-        <div className="login-container">
-          <form>
+        <div className="remind-container">
+          <form className="remind-form">
           <TextLabel htmlFor="username">Įveskite savo el. paštą</TextLabel>
           <InputField id="username" name="username"></InputField>
               <LinkButton href="/" className="linkButton">

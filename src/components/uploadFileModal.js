@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Modal from "react-modal";
 import "./editModal.css";
 import Button from "./button";
-
+import "./uploadFileModal.css"
 
 Modal.setAppElement("#root");
 
@@ -24,36 +24,45 @@ const UploadFileModal = ({ isOpen, closeModal, onSave, order }) => {
     document.body.removeChild(link);
   };
 
+  const handleFileDelete = (fileToDelete) => {
+    const filteredFiles = uploadedFiles.filter((file) => file !== fileToDelete);
+    setUploadedFiles(filteredFiles);
+  };
+
   const handleSave = () => {
-    const updatedOrder=  {
+    const updatedOrder = {
       ...order,
       additionalFiles: uploadedFiles,
     };                    
-    onSave(updatedOrder);
+   // onSave(updatedOrder);
     closeModal();
   };
 
   return (
-    <Modal
+    <Modal className = "extra-files"
       isOpen={isOpen}
       onRequestClose={closeModal}
       contentLabel="Edit Order Modal"
     >
       <h2>Papildomi failai</h2>
       <form>
-        <label>
+        <label className="file-label">
           Įkelti failus:
           <input type="file" onChange={handleFileUpload} />
         </label>
         <div className="uploaded-files-container">
-          <h3>Įkelti failai:</h3>
+          <h3 className = "file-label">Failai</h3>
           <ul className="uploaded-files-list">
             {uploadedFiles.length > 0 ? (
               uploadedFiles.map((file, index) => (
                 <li key={index}>
-                  <a href="file-download" onClick={() => handleFileDownload(file)}>
-                    {file.name}
-                  </a>
+                  <div className="file-info">
+                    <a href="file-download" onClick={() => handleFileDownload(file)}>
+                      {file.name}
+                    </a>
+                    <Button className="delete-file-button" text="Ištrinti" onClick={() => handleFileDelete(file)} />
+                  </div>
+                  <hr className="file-separator" />
                 </li>
               ))
             ) : (
@@ -62,8 +71,8 @@ const UploadFileModal = ({ isOpen, closeModal, onSave, order }) => {
           </ul>
         </div>
         <div className="buttons-container">
-          <Button text="Išsaugoti" onClick={handleSave} />
-          <Button text="Uždaryti" onClick={closeModal} />
+          <Button className="link1" text="Išsaugoti" onClick={handleSave} />
+          <Button className="link1" text="Uždaryti" onClick={closeModal} />
         </div>
       </form>
     </Modal>

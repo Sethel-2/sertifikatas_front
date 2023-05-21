@@ -39,7 +39,7 @@ function LoginForm() {
         <TextLabel>Prašome prisijungti</TextLabel>
         </div>
         <div className="login-container">
-        <form method = "post" onSubmit = {handleLogin}>
+        <form className="login-form" method = "post" onSubmit = {handleLogin}>
           <TextLabel htmlFor="email">Elektroninis paštas:</TextLabel>
           <InputField id="email" name="email" value = {email} onChange ={(event) => setEmail(event.target.value)}/>
             <TextLabel htmlFor="password">Slaptažodis:</TextLabel>
@@ -49,7 +49,7 @@ function LoginForm() {
             Sukūrti paskyrą
           </LinkButton>
           <LinkButton href="/reminder" className="linkButton">
-            Pamiršote slatažodį?
+            Pamiršote slaptažodį?
           </LinkButton>
           </form>
           

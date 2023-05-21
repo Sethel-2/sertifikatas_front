@@ -39,7 +39,7 @@ function SettingsPage() {
           <input type="password" id="password-input" className="form-input" value={password} onChange={(e) => setPassword(e.target.value)} />
         </div>
 
-        <button type="submit" className="form-button">IŠsaugoti</button>
+        <button type="submit" className="form-button">Išsaugoti</button>
       </form>
     </div>
   );

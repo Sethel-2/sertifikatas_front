@@ -4,6 +4,7 @@ import Navbar from '../components/navbar';
 import ClientTable from '../components/clientTable';
 import EditClientModal from '../components/editClientModal';
 import AddClientModal from '../components/addClientModal';
+import { getClients } from '../api/user';
 
 function ClientPage() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -11,24 +12,23 @@ function ClientPage() {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [clients, setClients] = useState([
-    {
-      id: '1',
-      firstName: 'Artūras',
-      lastName: 'Sabaliauskas',
-      email: 'a.sabaliauskas@gmail.com',
-      phone: '+3706857111',
-      createdAt: '2023-05-02',
-    },
-    // Add more clients here
+    
   ]);
   const [originalClients, setOriginalClients] = useState([]);
   const [selectedClient, setSelectedClient] = useState({}); // add state for the edited client object
 
+  const handleFetchClients = async () =>
+  {
+    const {clients,message} = await getClients()
+    setClients(clients)
+    setOriginalClients(clients);
+  }  
+  useEffect(() =>{
+  handleFetchClients();
+  }, [])
 
   // Copy the initial clients to originalClients when the component mounts
-  useEffect(() => {
-    setOriginalClients([...clients]);
-  }, []);
+ 
 
   const handleStartDateChange = (event) => {
     setStartDate(event.target.value);
@@ -41,10 +41,12 @@ function ClientPage() {
   const handleFilterClick = () => {
     const filteredClients = originalClients.filter((client) => {
       const clientDate = new Date(client.createdAt);
+      console.log(client.createdAt, new Date(startDate), new Date(endDate));
       return clientDate >= new Date(startDate) && clientDate <= new Date(endDate);
     });
     setClients(filteredClients);
   };
+
 
   const handleCloseEditModal = () => {
     setIsEditModalOpen(false);
@@ -54,8 +56,8 @@ function ClientPage() {
     setIsAddModalOpen(false);
   }
 
-  const headers = ['ID', 'Vardas', 'Pavardė','El.paštas', 'Telefono Nr.', 'Sūkurta'];
-
+  const headers = ['Vardas', 'Pavardė','El.paštas', 'Telefono Nr.', 'Sūkurta'];
+  const columnKeys = ['firstName', 'lastName', 'email', 'phone', 'createdAt']
   const onAdd = () => {
     setIsAddModalOpen(true);
   };
@@ -90,12 +92,12 @@ function ClientPage() {
 
         <button onClick={handleFilterClick}>Filtruoti</button>
         <button onClick={() => setClients(originalClients)}>Rodyti visus</button>
-        <button onClick={onAdd}>Pridėti klientą</button>
+        {/* <button onClick={onAdd}>Pridėti klientą</button> */}
       </div>
 
-      <ClientTable clients={clients} headers={headers} onEdit={onEdit} setClients ={setClients}/>
+      <ClientTable clients={clients} headers={headers} onEdit={onEdit} setClients ={setClients} columnKeys = {columnKeys}/>
 
-      {isAddModalOpen && (
+      {/* {isAddModalOpen && (
         <AddClientModal
           isOpen={isAddModalOpen}
           closeModal={handleCloseAddModal}
@@ -104,7 +106,7 @@ function ClientPage() {
           }}
           clients={clients}
         />
-      )}
+      )} */}
 
 {isEditModalOpen && (
     <EditClientModal

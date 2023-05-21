@@ -6,10 +6,13 @@ import EditOrderModal from './editModal';
 import CertificateUploadButton from './certificateUploadButton';
 import UploadFileModal from './uploadFileModal';
 import { getUser } from '../utils/storage';
+import { format } from 'date-fns';
+import { uploadFiles } from '../api/file';
+import { toast } from 'react-toastify';
 
 
 
-function OrderTable({ headers, orders, setTableOrders, updateOrder }) {
+function OrderTable({ headers, orders, setTableOrders, updateOrder, columnKeys, deleteOrder, clients }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
@@ -30,18 +33,26 @@ function OrderTable({ headers, orders, setTableOrders, updateOrder }) {
     setSelectedOrder(order);
     setIsUploadModalOpen(true);
   };
+  const handleUploadCertificate = async (file, orderId) => {
+    const data = {
+      type: 'certificate',
+      orderId: orderId,
+      files: file,
+    }
+    const {success, message} = await uploadFiles(data)
+    if(!success){
+      toast.error(message);
+      return
+    }
 
+  }
 
-  const handleStatusChange = (order, event) => {
-    const updatedOrder = { ...order, state: event.target.value };
-    const updatedOrders = orders.map((o) => (o.id === order.id ? updatedOrder : o));
-    setTableOrders(updatedOrders);
+  
+
+  const handleDeleteOrder = (id) => {
+   deleteOrder(id);
   };
-
-  const handleDeleteOrder = (order) => {
-    const updatedOrders = orders.filter((o) => o.id !== order.id);
-    setTableOrders(updatedOrders);
-  };
+  
   
   return (
     <div className="order-table">
@@ -57,42 +68,26 @@ function OrderTable({ headers, orders, setTableOrders, updateOrder }) {
           </tr>
         </thead>
         <tbody>
+          
           {orders.map((order) => (
-            <tr key={order.id}>
-              {Object.keys(order).map((key) => {
+            <tr key={order._id}>
+              {columnKeys.map((key) => {
                 if (key === 'state' && isCertificator) {
                   return (
-                    <td key={`${order.id}_${key}`}>
-                      <select
-                        className={`status status-${order.state.toLowerCase()}`}
-                        value={order.state}
-                        onChange={(event) => handleStatusChange(order, event)}
-                      >
-                        <option className="status-not-started" value="Not started">
-                          Nepradėta
-                        </option>
-                        <option className="status-in-progress" value="In progress">
-                          Vykdoma
-                        </option>
-                        <option className="status-completed" value="Completed">
-                          Atlikta
-                        </option>
-                      </select>
+                    <td key={`${order._id}_${key}`}>
+                      {order[key]}
                     </td>
                   );
                 }
                 if (key === "certificate"){
-                  return <td key = {`${order.id}_${key}`}>
-                    <CertificateUploadButton onUpload={(file) => {
-                    updateOrder({...order, certificate:file})
-                  }} />
+                  return <td key = {`${order._id}_${key}`}>
+                    <CertificateUploadButton onUpload={file => handleUploadCertificate(file, order._id)} file = {order.certificateFile}/>
                   </td>
                 }
                 if(key === "client" && !isCertificator) return null;
-                if (key === "additionalFiles") return null;
-                if (key === "clientId") return null;
-                
-                return <td key={`${order.id}_${key}`}>{order[key]}</td>;
+                if(key === "client") return <td key={`${order._id}_${key}`}>{order.client.fullName}</td>;
+                if(key === "createdAt") return <td key={`${order._id}_${key}`}>{format(new Date(order[key]), "yyyy-MM-dd; HH:mm")}</td>;
+                return <td key={`${order._id}_${key}`}>{order[key]}</td>;
               })}
               <td className="action-column">
               <div className="button-container">
@@ -104,7 +99,7 @@ function OrderTable({ headers, orders, setTableOrders, updateOrder }) {
                 </button>:null}
                
                 
-                {isCertificator? <button className="delete-button" onClick ={() => handleDeleteOrder(order)}>
+                {isCertificator? <button className="delete-button" onClick ={() => handleDeleteOrder(order._id)}>
                   <FontAwesomeIcon icon={faTrashAlt} />
                 </button>:null}
                
@@ -116,6 +111,7 @@ function OrderTable({ headers, orders, setTableOrders, updateOrder }) {
       </table>
       {selectedOrder && (
         <EditOrderModal
+          clients={clients}
           isOpen={isModalOpen}
           closeModal={handleCloseModal}
           order={selectedOrder}
