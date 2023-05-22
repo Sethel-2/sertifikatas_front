@@ -12,7 +12,7 @@ const AddClientModal = ({ isOpen, closeModal, handleAddClient, clients }) => {
 
   const handleSave = () => {
     const lastClientId = clients && clients.length > 0 ? clients[clients.length - 1].id : "0";
-    console.log(clients.length);
+   
 
     const newClient = {
       id: parseInt(lastClientId) + 1,

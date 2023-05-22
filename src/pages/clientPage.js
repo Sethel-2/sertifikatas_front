@@ -41,7 +41,7 @@ function ClientPage() {
   const handleFilterClick = () => {
     const filteredClients = originalClients.filter((client) => {
       const clientDate = new Date(client.createdAt);
-      console.log(client.createdAt, new Date(startDate), new Date(endDate));
+     
       return clientDate >= new Date(startDate) && clientDate <= new Date(endDate);
     });
     setClients(filteredClients);

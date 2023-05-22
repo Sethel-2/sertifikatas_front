@@ -10,12 +10,12 @@ const EditOrderModal = ({ isOpen, closeModal, onSave, order, clients }) => {
   const [selectedClient, setSelectedClient] = useState(order.client._id);
   const [notes, setNotes] = useState(order.notes);
   const [state, setState] = useState(order.state);
-  console.log(clients, selectedClient);
+  
   const handleStatusChange = (event) => {
    
     setState(event.target.value);
   };
-  console.log(order);
+
   const handleSave = () => {
     const updatedOrder=  {
       ...order,

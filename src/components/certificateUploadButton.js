@@ -46,7 +46,7 @@ function CertificateUploadButton({ onUpload, file }) {
         <div style={{ maxHeight: "40px", overflowY: "auto" }}>
           {certificateFiles.map((file, index) => {
             if(!file) return null;
-            console.log(file)
+           
             return <div key={index}>
             <a href={URL.createObjectURL(file)} download={file.name}>
               <p>{formatFileName(file.name)}</p>

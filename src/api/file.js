@@ -13,15 +13,14 @@ import axios from "axios";
 
         
         const response = await axios.post(`http://localhost:3001/file`, formData, {withCredentials:true, headers: {"Content-type": "multipart/form-data"}})
-        
-        if (response !== 200) {
+        if (response.status !== 200) {
             const { message } = response.data;
             throw new Error(message);
         }
-        return { success: true, message: "Success"};
+        return { success: true, message: "Success", files: response.data.files};
     } catch (error) {
         console.error(error);
-        return { success: false, message: error.message};
+        return { success: false, message: error.message, files: []};
     }
  }
 

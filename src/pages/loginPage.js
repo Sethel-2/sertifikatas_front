@@ -18,7 +18,7 @@ function LoginForm() {
   const handleLogin = async(event) =>{
     event.preventDefault()
       const {user, message} = await login(email,password)
-      console.log(email,password)
+      
       if(!user){
         toast.error(message)
         return

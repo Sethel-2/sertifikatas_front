@@ -3,12 +3,12 @@ import './orderTable.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt, faEdit, faUpload } from '@fortawesome/free-solid-svg-icons';
 import EditOrderModal from './editModal';
-import CertificateUploadButton from './certificateUploadButton';
 import UploadFileModal from './uploadFileModal';
 import { getUser } from '../utils/storage';
 import { format } from 'date-fns';
 import { uploadFiles } from '../api/file';
 import { toast } from 'react-toastify';
+import LinkButton from './linkButton';
 
 
 
@@ -33,19 +33,7 @@ function OrderTable({ headers, orders, setTableOrders, updateOrder, columnKeys, 
     setSelectedOrder(order);
     setIsUploadModalOpen(true);
   };
-  const handleUploadCertificate = async (file, orderId) => {
-    const data = {
-      type: 'certificate',
-      orderId: orderId,
-      files: file,
-    }
-    const {success, message} = await uploadFiles(data)
-    if(!success){
-      toast.error(message);
-      return
-    }
-
-  }
+ 
 
   
 
@@ -80,9 +68,9 @@ function OrderTable({ headers, orders, setTableOrders, updateOrder, columnKeys, 
                   );
                 }
                 if (key === "certificate"){
-                  return <td key = {`${order._id}_${key}`}>
-                    <CertificateUploadButton onUpload={file => handleUploadCertificate(file, order._id)} file = {order.certificateFile}/>
-                  </td>
+                  return order.certificateFile ? <td key={`${order._id}_${key}`}>
+                  <LinkButton href = {order.certificateFile.url}>{order.certificateFile.originalname}</LinkButton>
+                  </td> : <td key={`${order._id}_${key}`}>-</td>
                 }
                 if(key === "client" && !isCertificator) return null;
                 if(key === "client") return <td key={`${order._id}_${key}`}>{order.client.fullName}</td>;
