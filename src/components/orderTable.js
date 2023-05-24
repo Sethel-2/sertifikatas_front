@@ -6,13 +6,11 @@ import EditOrderModal from './editModal';
 import UploadFileModal from './uploadFileModal';
 import { getUser } from '../utils/storage';
 import { format } from 'date-fns';
-import { uploadFiles } from '../api/file';
-import { toast } from 'react-toastify';
 import LinkButton from './linkButton';
 
 
 
-function OrderTable({ headers, orders, setTableOrders, updateOrder, columnKeys, deleteOrder, clients }) {
+function OrderTable({ headers, orders, setOrders, updateOrder, columnKeys, deleteOrder, clients }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
@@ -103,6 +101,7 @@ function OrderTable({ headers, orders, setTableOrders, updateOrder, columnKeys, 
           isOpen={isModalOpen}
           closeModal={handleCloseModal}
           order={selectedOrder}
+          setSelectedOrder={setSelectedOrder}
           onSave={(updatedOrder) => {
           updateOrder(updatedOrder)
           }}
@@ -114,9 +113,18 @@ function OrderTable({ headers, orders, setTableOrders, updateOrder, columnKeys, 
           isOpen={isUploadModalOpen}
           closeModal={handleCloseModal}
           order={selectedOrder}
+          setSelectedOrder={setSelectedOrder}
           onSave={(updatedOrder) => {
-          updateOrder(updatedOrder)
-         
+            setOrders((prev)=>{
+              return prev.map(order => {
+                if(order._id === updatedOrder._id){
+                  return updatedOrder
+                }
+                else{
+                  return order
+                }
+              })
+            })
           }}
         />
 

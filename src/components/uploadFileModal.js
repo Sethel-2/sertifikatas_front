@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 
 Modal.setAppElement("#root");
 
-const UploadFileModal = ({ isOpen, closeModal, order, onSave }) => {
+const UploadFileModal = ({ isOpen, closeModal, setSelectedOrder, order, onSave }) => {
   const [uploadedFiles, setUploadedFiles] = useState([...order.additionalFiles]);
   const [certificateFiles, setCertificateFiles] = useState();
 
@@ -46,8 +46,9 @@ const UploadFileModal = ({ isOpen, closeModal, order, onSave }) => {
         certificateFile: type==="certificate" ? null: order.certificateFile,
         additionalFiles
       }
-      console.log(updatedOrder)
       onSave(updatedOrder)
+      setSelectedOrder(updatedOrder)
+      setCertificateFiles(undefined)
     }
     // const filteredFiles = uploadedFiles.filter((file) => file !== fileToDelete);
     // setUploadedFiles(filteredFiles);
@@ -55,6 +56,10 @@ const UploadFileModal = ({ isOpen, closeModal, order, onSave }) => {
  
   const handleSave = async (event) => {
     event.preventDefault();
+    if(!certificateFiles){
+      closeModal();
+      return
+    }
     if(order.certificateFile){
       handleFileDelete(order.certificateFile._id, "replace", "certificate")
     }
@@ -63,7 +68,9 @@ const UploadFileModal = ({ isOpen, closeModal, order, onSave }) => {
       toast.error(message)
       return
     }
-    onSave({...order, certificateFile:files[0]})
+    const updatedOrder = {...order, certificateFile: files[0]}
+    onSave(updatedOrder)
+    setSelectedOrder(updatedOrder)
     toast.success("Išsaugota")
     closeModal();
   };

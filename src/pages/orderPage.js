@@ -1,7 +1,6 @@
 import '../orderPage.css';
 import Navbar from '../components/navbar';
 import OrderTable from '../components/orderTable';
-import CertificateUploadButton from '../components/certificateUploadButton';
 import React, {useState, useEffect} from 'react';
 import AddOrderModal from '../components/addOrderModal';
 import Button from '../components/button';
@@ -9,7 +8,7 @@ import { getUser } from '../utils/storage';
 import { createOrder, deleteOrder, getOrders, updateOrder } from '../api/order';
 import { toast } from 'react-toastify';
 import { getClients } from '../api/user';
-import debounce from 'lodash.debounce';
+
 
 function OrderPage() {
 
@@ -26,17 +25,20 @@ function OrderPage() {
   ]);
   const [originalOrders, setOriginalOrders] = useState([]);
 
-  // Copy the initial orders to originalOrders when the component mounts
   
   const handleFetchOrders = async () => {
   
-  const {orders: fetchedOrders, message} = await getOrders()
+  const {orders: fetchedOrders, message, success} = await getOrders()
+  if(!success){
+    toast.error(message)
+    return
+  }
   setOrders(fetchedOrders)
   setOriginalOrders(fetchedOrders);
+
   }
   useEffect(() =>{
     handleFetchOrders()
-    
   },[] );
 
   const handleUpdateOrder = async (order) =>{
@@ -69,7 +71,11 @@ function OrderPage() {
     setStartDate(event.target.value);
   };
   const handleSearch = (async () => {
-    const {orders, message} = await getOrders(searchQuery)
+    const {orders, message, success} = await getOrders(searchQuery)
+    if(!success){
+      toast.error(message)
+      return
+    }
     setOrders(orders)
     
     setOriginalOrders(orders)
@@ -119,7 +125,12 @@ function OrderPage() {
 
   const handleFetchClients = async () =>
   {
-    const {clients,message} = await getClients()
+    const {clients,message, success} = await getClients()
+    if(!success){
+      toast.error(message)
+      return
+    }
+
     setClients(clients)
    
   }  
@@ -155,7 +166,7 @@ function OrderPage() {
         {isCertificator?<Button text="Pridėti užsakymą" onClick={handleAddOrderClick} />:null}
       </div>
 
-      <OrderTable orders={orders} headers={headers} columnKeys = {columnKeys} setTableOrders={(tableOrders)=>{setOrders(tableOrders)}} updateOrder = {handleUpdateOrder} deleteOrder = {handleDeleteOrder} clients = {clients} />
+      <OrderTable orders={orders} headers={headers} columnKeys = {columnKeys} setOrders={setOrders} updateOrder = {handleUpdateOrder} deleteOrder = {handleDeleteOrder} clients = {clients} />
 
       <AddOrderModal isOpen={isModalOpen} handleAddOrder={(newOrder)=>handleAddOrder(newOrder)} closeModal={()=>setIsModalOpen(false) } clients = {clients}></AddOrderModal>
       

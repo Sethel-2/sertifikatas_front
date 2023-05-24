@@ -11,10 +11,10 @@ export const getOrders = async (search) => {
             throw new Error(message);
         }
         const orders = await response.json();
-        return { orders, message: 'Success' };
+        return { orders, message: 'Success', success: true };
     } catch (error) {
         console.error(error);
-        return { orders: [], message: error.message };
+        return { orders: [], message: error.message, success: false };
     }
 }
 

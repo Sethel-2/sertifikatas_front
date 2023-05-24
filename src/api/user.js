@@ -71,10 +71,10 @@ export const getClients = async () => {
         throw new Error(message);
       }
       const clients = await response.json();
-      return { clients, message: "Success" };
+      return { clients, message: "Success", success: true };
     } catch (error) {
       console.error(error);
-      return { clients: [], message: error.message };
+      return { clients: [], message: error.message, success: false};
     }
   };
   
@@ -94,8 +94,8 @@ export const getClients = async () => {
         const { message } = await response.json();
         throw new Error(message);
       }
-      const user = await response.json();
-      return { user, message: "Success" };
+      const updatedUser = await response.json();
+      return { user: updatedUser, message: "Success" };
     } catch (error) {
       console.error(error);
       return { user: null, message: error.message };

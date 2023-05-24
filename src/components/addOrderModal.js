@@ -7,7 +7,6 @@ Modal.setAppElement("#root");
 const AddOrderModal = ({ isOpen, closeModal, handleAddOrder, clients }) => {
   const [selectedClient, setSelectedClient] = useState(clients.length > 0 ? clients[0]._id : "");
   const [notes, setNotes] = useState("");
-//to do: replace client id with selected client
   const handleSave = () => {
     const newOrder = { client: selectedClient, notes: notes, createdAt: new Date()};
     handleAddOrder(newOrder);
@@ -18,7 +17,6 @@ const AddOrderModal = ({ isOpen, closeModal, handleAddOrder, clients }) => {
   return (
     <Modal
       isOpen={isOpen}
-      //onRequestClose={closeModal}
       contentLabel="Add Order Modal"
     >
       <h2>Pridėti užsakymą</h2>
@@ -28,7 +26,7 @@ const AddOrderModal = ({ isOpen, closeModal, handleAddOrder, clients }) => {
           <select
             value={selectedClient}
             onChange={(e) => setSelectedClient(e.target.value)}>
-            {clients.map((client) => <option value= {client._id}>{client.fullName}</option>)}
+            {clients.map((client) => <option key={client._id} value= {client._id}>{client.fullName}</option>)}
           </select>
         </label>
         <label>

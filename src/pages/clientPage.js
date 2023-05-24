@@ -3,12 +3,12 @@ import '../clientPage.css';
 import Navbar from '../components/navbar';
 import ClientTable from '../components/clientTable';
 import EditClientModal from '../components/editClientModal';
-import AddClientModal from '../components/addClientModal';
 import { getClients } from '../api/user';
+import { toast } from 'react-toastify';
 
 function ClientPage() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [clients, setClients] = useState([
@@ -19,7 +19,11 @@ function ClientPage() {
 
   const handleFetchClients = async () =>
   {
-    const {clients,message} = await getClients()
+    const {clients,message,success} = await getClients()
+    if(!success){
+      toast.error(message)
+      return
+    }
     setClients(clients)
     setOriginalClients(clients);
   }  
@@ -52,16 +56,11 @@ function ClientPage() {
     setIsEditModalOpen(false);
   };
   
-  const handleCloseAddModal = () => {
-    setIsAddModalOpen(false);
-  }
+  
 
   const headers = ['Vardas', 'Pavardė','El.paštas', 'Telefono Nr.', 'Sūkurta'];
   const columnKeys = ['firstName', 'lastName', 'email', 'phone', 'createdAt']
-  const onAdd = () => {
-    setIsAddModalOpen(true);
-  };
-
+  
   const onEdit = (client) => {
     setIsEditModalOpen(true);
     setSelectedClient(client); // set the initial state of the edited client object

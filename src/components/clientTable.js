@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import './clientTable.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrashAlt, faEdit } from '@fortawesome/free-solid-svg-icons';
 import EditClientModal from './editClientModal';
 import { format } from 'date-fns';
 
@@ -14,15 +12,15 @@ function ClientTable({ clients, headers, onEdit, setClients, columnKeys }) {
     setIsModalOpen(false);
   };
 
-  const handleEditClient = (client) => {
-    onEdit(client);
-  };
+  // const handleEditClient = (client) => {
+  //   onEdit(client);
+  // };
 
   
-  const handleDeleteOrder = (client) => {
-    const updatedClients = clients.filter((o) => o.id !== client.id);
-    setClients(updatedClients);
-  };
+  // const handleDeleteOrder = (client) => {
+  //   const updatedClients = clients.filter((o) => o.id !== client.id);
+  //   setClients(updatedClients);
+  // };
  
 
   return (

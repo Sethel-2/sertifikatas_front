@@ -7,7 +7,7 @@ function HomePage() {
   return (
     <div className="background-image">
        <Navbar/>
-        
+       
       
     </div>
   );

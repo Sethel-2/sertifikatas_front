@@ -4,8 +4,7 @@ import React, { useState } from "react";
 import "./certificateUploadButton.css";
 
 function CertificateUploadButton({ onUpload, file }) {
-  const [certificateFiles, setCertificateFiles] = useState
-  ([]);
+  const [certificateFiles, setCertificateFiles] = useState([]);
   
   const handleFileChange = (event) => {
     const files = Array.from(event.target.files);

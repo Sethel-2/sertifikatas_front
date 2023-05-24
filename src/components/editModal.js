@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 import "./editModal.css";
 import Button from "./button";
@@ -27,6 +27,11 @@ const EditOrderModal = ({ isOpen, closeModal, onSave, order, clients }) => {
     closeModal();
   };
 
+  useEffect(() => {
+    setSelectedClient(order.client._id);
+    setNotes(order.notes);
+    setState(order.state);
+  }, [order])
   return (
     <Modal
       isOpen={isOpen}
