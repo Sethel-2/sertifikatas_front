@@ -79,7 +79,7 @@ import axios from "axios";
             credentials: "include",
         };
 
-        const response = await fetch(`http://localhost:3001/file/${id}`, requestOptions);
+        const response = await fetch(`http://localhost:3001/file/delete/${id}`, requestOptions);
         if (!response.ok) {
             const { message } = await response.json();
             throw new Error(message);
@@ -89,5 +89,26 @@ import axios from "axios";
     } catch (error) {
         console.error(error);
         return { file: null, message: error.message };
+    }
+ }
+
+ export const deleteFiles = async (ids) => {
+    try {
+        const requestOptions = {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+        };
+
+        const fileIds = ids.join(',');
+        const response = await fetch(`http://localhost:3001/file/delete-files?fileIds=${fileIds}`, requestOptions);
+        if (!response.ok) {
+            const { message } = await response.json();
+            throw new Error(message);
+        }
+        return { success: true, message: "Success" };
+    } catch (error) {
+        console.error(error);
+        return { success: false, message: error.message };
     }
  }
