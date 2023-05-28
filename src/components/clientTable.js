@@ -2,26 +2,15 @@ import React, { useState } from 'react';
 import './clientTable.css';
 import EditClientModal from './editClientModal';
 import { format } from 'date-fns';
+import Button from './button';
 
-function ClientTable({ clients, headers, onEdit, setClients, columnKeys }) {
+function ClientTable({ clients, headers, onEdit, setClients, columnKeys, currentPage, setCurrentPage, nextPageExists }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedClient] = useState(null);
-
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
-
-  // const handleEditClient = (client) => {
-  //   onEdit(client);
-  // };
-
-  
-  // const handleDeleteOrder = (client) => {
-  //   const updatedClients = clients.filter((o) => o.id !== client.id);
-  //   setClients(updatedClients);
-  // };
- 
 
   return (
     <div className="client-table">
@@ -50,6 +39,13 @@ function ClientTable({ clients, headers, onEdit, setClients, columnKeys }) {
           ))}
         </tbody>
       </table>
+      
+      <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', maxWidth: '500px', margin: '2rem auto' }}>
+        <Button className="link1" text="Atgal" disabled={currentPage === 1}  onClick={() => setCurrentPage(prev => prev - 1)} />
+        <div>{currentPage}</div>
+        <Button className="link1" text="Toliau" disabled={clients.length === 0 || !nextPageExists} onClick={() => setCurrentPage(prev => prev + 1)} />
+      </div>
+
       {selectedClient && (
         <EditClientModal
           isOpen={isModalOpen}

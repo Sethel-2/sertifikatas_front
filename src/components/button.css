@@ -12,6 +12,10 @@ button.link1{
     justify-content: center;
     font-size: 16px;
 }
+button.link1:disabled {
+    background-color: grey;
+    cursor: default;
+}
 button.edit-button{
     display: flex;
     padding: 5px;

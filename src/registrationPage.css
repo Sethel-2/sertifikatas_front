@@ -36,6 +36,8 @@ body{
   position:relative;
   background-color: transparent; /* add this line to make the form more visible */
   top:10px;
+  width: 100%;
+  max-width: 400px;
 }
 
 .register-form {
@@ -45,7 +47,6 @@ body{
   border: 2px solid #a5a5a5;
   border-radius: 5px;
   width: 100%; /* add this line to make the form fill the container */
-  
 }
 
 .logo-container {

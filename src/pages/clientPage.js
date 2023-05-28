@@ -1,62 +1,52 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import '../clientPage.css';
 import Navbar from '../components/navbar';
 import ClientTable from '../components/clientTable';
 import EditClientModal from '../components/editClientModal';
 import { getClients } from '../api/user';
 import { toast } from 'react-toastify';
+import { formatEndDate, formatStartDate } from '../utils/date';
 
 function ClientPage() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [clients, setClients] = useState([
-    
-  ]);
-  const [originalClients, setOriginalClients] = useState([]);
+  const [clients, setClients] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [nextPageExists, setNextPageExists] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1);
   const [selectedClient, setSelectedClient] = useState({}); // add state for the edited client object
+  const searchRef = useRef()
+  const startDateRef = useRef()
+  const endDateRef = useRef()
 
-  const handleFetchClients = async () =>
-  {
-    const {clients,message,success} = await getClients()
+  const handleFetchClients = async () => {
+    const from = startDate ? formatStartDate(startDate) : ''
+    const to = endDate ? formatEndDate(endDate) : ''
+    const {clients,message,success,nextPageExists} = await getClients(searchQuery, currentPage, from, to)
     if(!success){
       toast.error(message)
       return
     }
     setClients(clients)
-    setOriginalClients(clients);
+    setNextPageExists(nextPageExists)
   }  
+
   useEffect(() =>{
-  handleFetchClients();
-  }, [])
+    handleFetchClients();
+  }, [currentPage, searchQuery, startDate, endDate])
 
-  // Copy the initial clients to originalClients when the component mounts
- 
-
-  const handleStartDateChange = (event) => {
-    setStartDate(event.target.value);
-  };
-
-  const handleEndDateChange = (event) => {
-    setEndDate(event.target.value);
-  };
 
   const handleFilterClick = () => {
-    const filteredClients = originalClients.filter((client) => {
-      const clientDate = new Date(client.createdAt);
-     
-      return clientDate >= new Date(startDate) && clientDate <= new Date(endDate);
-    });
-    setClients(filteredClients);
+    setStartDate(startDateRef.current.value)
+    setEndDate(endDateRef.current.value)
+    setCurrentPage(1)
   };
-
 
   const handleCloseEditModal = () => {
     setIsEditModalOpen(false);
   };
-  
-  
 
   const headers = ['Vardas', 'Pavardė','El.paštas', 'Telefono Nr.', 'Sūkurta'];
   const columnKeys = ['firstName', 'lastName', 'email', 'phone', 'createdAt']
@@ -66,8 +56,10 @@ function ClientPage() {
     setSelectedClient(client); // set the initial state of the edited client object
   };
 
-
-
+  const handleSearch = () => {
+    setSearchQuery(searchRef.current.value);
+    setCurrentPage(1)
+  }
   
   const handleSaveEdit = (editedClient) => {
     const updatedClients = clients.map((client) =>
@@ -77,46 +69,59 @@ function ClientPage() {
     setIsEditModalOpen(false);
   };
 
+  const handleShowAll = () => {
+    setStartDate('')
+    setEndDate('')
+    setSearchQuery('')
+    setCurrentPage(1)
+    startDateRef.current.value = ''
+    endDateRef.current.value = ''
+    searchRef.current.value = ''
+  };
+
   return (
     <div className="background-image">
       <Navbar/>
-
       <div className="filter-section">
+      <label htmlFor="search-query">Ieškoti užsakymo:</label>
+      
+      <input
+        type="text"
+        id="search-query"
+        ref={searchRef}
+        placeholder="Įveskite klientą"
+      />
+      <button onClick = {handleSearch}>Ieškoti</button>
         <label htmlFor="start-date">Pradžios data:</label>
-        <input type="date" id="start-date" value={startDate} onChange={handleStartDateChange} />
+        <input type="date" id="start-date" ref={startDateRef} />
 
         <label htmlFor="end-date">Pabaigos data:</label>
 
-        <input type="date" id="end-date" value={endDate} onChange={handleEndDateChange} />
+        <input type="date" id="end-date" ref={endDateRef} />
 
         <button onClick={handleFilterClick}>Filtruoti</button>
-        <button onClick={() => setClients(originalClients)}>Rodyti visus</button>
-        {/* <button onClick={onAdd}>Pridėti klientą</button> */}
+        <button onClick={handleShowAll}>Rodyti visus</button>
       </div>
 
-      <ClientTable clients={clients} headers={headers} onEdit={onEdit} setClients ={setClients} columnKeys = {columnKeys}/>
+      <ClientTable
+        clients={clients}
+        headers={headers}
+        onEdit={onEdit}
+        setClients={setClients}
+        columnKeys={columnKeys}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        nextPageExists={nextPageExists}
+      />
 
-      {/* {isAddModalOpen && (
-        <AddClientModal
-          isOpen={isAddModalOpen}
-          closeModal={handleCloseAddModal}
-          handleAddClient={(newClient) => {
-            setClients([...clients, newClient]);
-          }}
-          clients={clients}
+      {isEditModalOpen && (
+        <EditClientModal
+          isOpen={isEditModalOpen}
+          client={selectedClient}
+          closeModal={handleCloseEditModal}
+          onSave={handleSaveEdit}
         />
-      )} */}
-
-{isEditModalOpen && (
-    <EditClientModal
-    isOpen={isEditModalOpen}
-      client={selectedClient}
-      closeModal={handleCloseEditModal}
-      onSave={handleSaveEdit}
-
-      
-    />
-  )}
+      )}
     </div>
   );
 }

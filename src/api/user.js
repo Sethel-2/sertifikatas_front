@@ -58,23 +58,23 @@ export const logout = async () => {
         return { success: false, message: error.message };
     }
 }
-export const getClients = async () => {
+export const getClients = async (search, page, from, to, showAll) => {
     try {
       const requestOptions = {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
       };
-      const response = await fetch(`http://localhost:3001/user`, requestOptions);
+      const response = await fetch(`http://localhost:3001/user?search=${search? search : ""}&page=${page}&from=${from}&to=${to}&showAll=${showAll || ''}`, requestOptions);
       if (!response.ok) {
         const { message } = await response.json();
         throw new Error(message);
       }
-      const clients = await response.json();
-      return { clients, message: "Success", success: true };
+      const { clients, nextPageExists } = await response.json();
+      return { clients, message: "Success", success: true, nextPageExists };
     } catch (error) {
       console.error(error);
-      return { clients: [], message: error.message, success: false};
+      return { clients: [], message: error.message, success: false, nextPageExists: false };
     }
   };
   
@@ -102,3 +102,46 @@ export const getClients = async () => {
     }
   };
   
+  export const remindPassword = async (email) => {
+    try {
+      const requestOptions = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      };
+      const response = await fetch(
+        `http://localhost:3001/user/remind-password`,
+        requestOptions
+      );
+      const { message } = await response.json();
+      if (!response.ok) {
+        throw new Error(message);
+      }
+      return { success: true, message: message };
+    } catch (error) {
+      console.error(error);
+      return { success: false, message: error.message };
+    }
+  };
+
+  export const resetPassword = async (password, token) => {
+    try {
+      const requestOptions = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password, token }),
+      };
+      const response = await fetch(
+        `http://localhost:3001/user/reset-password`,
+        requestOptions
+      );
+      const { message } = await response.json();
+      if (!response.ok) {
+        throw new Error(message);
+      }
+      return { success: true, message: message };
+    } catch (error) {
+      console.error(error);
+      return { success: false, message: error.message };
+    }
+  }

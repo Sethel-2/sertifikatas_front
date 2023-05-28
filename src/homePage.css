@@ -51,5 +51,10 @@ a:hover{
     background-position: center;
 }
 
-
-  
+.home-title {
+    max-width: 900px;
+    text-align: center;
+    font-size: 32px;
+    margin: 2rem auto 2rem;
+    font-weight: 500;
+}

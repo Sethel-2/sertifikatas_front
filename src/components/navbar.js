@@ -1,5 +1,6 @@
 import React from 'react';
 import '../homePage.css';
+import '../components/nav.css';
 import { Link } from 'react-router-dom';
 import logo from '../images/logo1.png';
 import Button from './button';
@@ -27,9 +28,9 @@ function Navbar() {
       <nav>
         <ul>
           <Link className="imageLink" to="/home"><img className="pageLogo" src={logo} alt="Logo" /></Link>
-          <li><Link className="link1" to="/order">Užsakymai</Link></li>
-          <li><Link className="link1" to="/client">Klientai</Link></li>
-          <li><Link className="link1" to="/settings">Nustatymai</Link></li>
+          <li><Link className="nav-link" to="/order">Užsakymai</Link></li>
+          <li><Link className="nav-link" to="/client">Klientai</Link></li>
+          <li><Link className="nav-link" to="/settings">Nustatymai</Link></li>
           <li><Button text = "Atsijungti" className="link1" onClick ={handleLogout}></Button></li>
         </ul>
       </nav>

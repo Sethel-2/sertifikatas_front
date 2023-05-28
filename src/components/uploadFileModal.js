@@ -1,18 +1,21 @@
 import React, { useRef, useState } from "react";
 import Modal from "react-modal";
 import "./editModal.css";
+import "./overlay.css";
 import Button from "./button";
 import "./uploadFileModal.css"
 import { deleteFile, deleteFiles, uploadFiles } from "../api/file";
 import { toast } from "react-toastify";
+import loadingGif from '../images/loading-gif.gif'
 
 Modal.setAppElement("#root");
 
-const UploadFileModal = ({ isOpen, closeModal, setSelectedOrder, order, onSave }) => {
+const UploadFileModal = ({ isOpen, closeModal, setSelectedOrder, order, updateOrder }) => {
   const [filesToUpload, setFilesToUpload] = useState([])
   const [filesToDelete, setFilesToDelete] = useState([])
   const [certificateFile, setCertificateFile] = useState();
   const [deleteCertificate, setDeleteCertificate] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const certInputRef = useRef()
 
   const handleClose = () => {
@@ -102,13 +105,20 @@ const UploadFileModal = ({ isOpen, closeModal, setSelectedOrder, order, onSave }
   }
 
   const handleSave = async (event) => {
+    setIsLoading(true)
     event.preventDefault();
 
     const { certificate, error: certificateError } = await handleSubmitCertificate()
-    if (certificateError) return
+    if (certificateError) {
+      setIsLoading(false)
+      return
+    }
 
     const { additionalFiles, error: additionalFilesError } = await handleSubmitFiles()
-    if (additionalFilesError) return
+    if (additionalFilesError) {
+      setIsLoading(false)
+      return
+    }
 
     const updatedOrder = {
       ...order,
@@ -116,13 +126,18 @@ const UploadFileModal = ({ isOpen, closeModal, setSelectedOrder, order, onSave }
       additionalFiles: [...order.additionalFiles.filter(filterDeleted), ...additionalFiles]
     }
 
-    onSave(updatedOrder)
+    updateOrder(updatedOrder)
     setSelectedOrder(updatedOrder)
     toast.success("Išsaugota")
+    setIsLoading(false)
     handleClose()
   }
 
   return (
+    <>
+    {isOpen && isLoading ? <div className="loading-overlay">
+      <img src={loadingGif} alt="loading" />
+    </div> : null}
     <Modal className = "extra-files"
       isOpen={isOpen}
       onRequestClose={handleClose}
@@ -137,7 +152,6 @@ const UploadFileModal = ({ isOpen, closeModal, setSelectedOrder, order, onSave }
           {order.certificateFile && !deleteCertificate ? (
             <div className="file-info">
               <a href={order.certificateFile.url}>{order.certificateFile.originalname}</a>
-              {/* <Button className="delete-file-button" text="Ištrinti" onClick={() => handleFileDelete(order.certificateFile._id, "delete", "certificate")} /> */}
               <Button className="delete-file-button" text="Ištrinti" onClick={() => setDeleteCertificate(true)} />
             </div>
           ) : (
@@ -149,7 +163,10 @@ const UploadFileModal = ({ isOpen, closeModal, setSelectedOrder, order, onSave }
 
         <label className="file-label">{order.certificateFile ? "Atnaujinti sertifikatą": "Įkelti sertifikatą"}
         <input type="file" onChange= {(event)=>handleFileUpload(event, "certificate")} ref={certInputRef} />
-        <Button className="delete-file-button" text="Išvalyti" onClick={() => certInputRef.current.value = ''} />
+        <Button className="delete-file-button" text="Išvalyti" onClick={() => {
+           certInputRef.current.value = ''
+           setCertificateFile(undefined)
+        }} />
           </label>
           <div className="uploaded-files-container">
           <h3 className = "file-label">Papildomi dokumentai</h3>
@@ -200,7 +217,7 @@ const UploadFileModal = ({ isOpen, closeModal, setSelectedOrder, order, onSave }
           <Button className="link1" text="Uždaryti" onClick={handleClose} />
         </div>
       
-    </Modal>
+    </Modal></>
   );
 };
 

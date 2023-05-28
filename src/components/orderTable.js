@@ -7,15 +7,15 @@ import UploadFileModal from './uploadFileModal';
 import { getUser } from '../utils/storage';
 import { format } from 'date-fns';
 import LinkButton from './linkButton';
+import Button from './button';
 
 
 
-function OrderTable({ headers, orders, setOrders, updateOrder, columnKeys, deleteOrder, clients }) {
+function OrderTable({ headers, orders, setOrders, updateOrder, columnKeys, deleteOrder, clients, currentPage, setCurrentPage, nextPageExists }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   
-
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setIsUploadModalOpen(false);
@@ -31,14 +31,10 @@ function OrderTable({ headers, orders, setOrders, updateOrder, columnKeys, delet
     setSelectedOrder(order);
     setIsUploadModalOpen(true);
   };
- 
-
-  
 
   const handleDeleteOrder = (id) => {
    deleteOrder(id);
   };
-  
   
   return (
     <div className="order-table">
@@ -95,6 +91,11 @@ function OrderTable({ headers, orders, setOrders, updateOrder, columnKeys, delet
           ))}
         </tbody>
       </table>
+      <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', maxWidth: '500px', margin: '2rem auto' }}>
+        <Button className="link1" text="Atgal" disabled={currentPage === 1}  onClick={() => setCurrentPage(prev => prev - 1)} />
+        <div>{currentPage}</div>
+        <Button className="link1" text="Toliau" disabled={orders.length === 0 || !nextPageExists} onClick={() => setCurrentPage(prev => prev + 1)} />
+      </div>
       {selectedOrder && (
         <EditOrderModal
           clients={clients}
@@ -114,7 +115,7 @@ function OrderTable({ headers, orders, setOrders, updateOrder, columnKeys, delet
           closeModal={handleCloseModal}
           order={selectedOrder}
           setSelectedOrder={setSelectedOrder}
-          onSave={(updatedOrder) => {
+          updateOrder={(updatedOrder) => {
             setOrders((prev)=>{
               return prev.map(order => {
                 if(order._id === updatedOrder._id){

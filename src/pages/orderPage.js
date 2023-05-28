@@ -1,45 +1,47 @@
 import '../orderPage.css';
 import Navbar from '../components/navbar';
 import OrderTable from '../components/orderTable';
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import AddOrderModal from '../components/addOrderModal';
 import Button from '../components/button';
 import { getUser } from '../utils/storage';
 import { createOrder, deleteOrder, getOrders, updateOrder } from '../api/order';
 import { toast } from 'react-toastify';
 import { getClients } from '../api/user';
+import { formatEndDate, formatStartDate } from '../utils/date';
 
 
 function OrderPage() {
-
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
   const [clients, setClients] = useState([]);
+  const [nextPageExists, setNextPageExists] = useState(false)
+  const searchRef = useRef()
+  const startDateRef = useRef()
+  const endDateRef = useRef()
   
   const user = getUser()
   const isCertificator = user && user.role === "certificator"
-  const [orders, setOrders] = useState([
-  
-  ]);
-  const [originalOrders, setOriginalOrders] = useState([]);
+  const [orders, setOrders] = useState([]);
 
-  
   const handleFetchOrders = async () => {
-  
-  const {orders: fetchedOrders, message, success} = await getOrders()
-  if(!success){
-    toast.error(message)
-    return
-  }
-  setOrders(fetchedOrders)
-  setOriginalOrders(fetchedOrders);
+    const from = startDate ? formatStartDate(startDate) : ''
+    const to = endDate ? formatEndDate(endDate) : ''
+    const { orders: fetchedOrders, message, success, nextPageExists } = await getOrders(searchQuery, currentPage, from, to);
+    if (!success) {
+      toast.error(message);
+      return;
+    }
+    setOrders(fetchedOrders);
+    setNextPageExists(nextPageExists)
+  };
 
-  }
   useEffect(() =>{
     handleFetchOrders()
-  },[] );
+  },[currentPage, searchQuery, startDate, endDate] );
 
   const handleUpdateOrder = async (order) =>{
     const {order:updatedOrder, message} = await updateOrder(order._id, order)
@@ -67,39 +69,10 @@ function OrderPage() {
     setOrders(orders.filter(order => order._id !== id))
   }
 
-  const handleStartDateChange = (event) => {
-    setStartDate(event.target.value);
-  };
-  const handleSearch = (async () => {
-    const {orders, message, success} = await getOrders(searchQuery)
-    if(!success){
-      toast.error(message)
-      return
-    }
-    setOrders(orders)
-    
-    setOriginalOrders(orders)
-  })
-
-  const handleSearchQueryChange = (event) => {
-    setSearchQuery(event.target.value);
-   
-   
-  };
-
-  const handleEndDateChange = (event) => {
-    setEndDate(event.target.value);
-  };
-
   const handleFilterClick = () => {
-    const filteredOrders = originalOrders.filter((order) => {
-      const orderDate = new Date(order.createdAt);
-      return (
-        orderDate >= new Date(startDate) &&
-        orderDate <= new Date(endDate)
-      );
-    });
-    setOrders(filteredOrders);
+    setStartDate(startDateRef.current.value)
+    setEndDate(endDateRef.current.value)
+    setCurrentPage(1)
   };
 
   const handleAddOrderClick = () => {
@@ -107,35 +80,42 @@ function OrderPage() {
   };
 
   const handleAddOrder= async (newOrder)=>{
-   
-
-    
     const {order, message} = await createOrder(newOrder)   
     if(!order){
       toast.error(message);
       return
     }                        
     setOrders([...orders, order]);
-    setOriginalOrders([...orders, order]); // also update the original orders
   };
 
   const handleShowAll = () => {
-    setOrders([...originalOrders]); // reset the orders to the original ones
+    setStartDate('')
+    setEndDate('')
+    setSearchQuery('')
+    setCurrentPage(1)
+    startDateRef.current.value = ''
+    endDateRef.current.value = ''
+    searchRef.current.value = ''
   };
+
+  const handleSearch = () => {
+    setSearchQuery(searchRef.current.value);
+    setCurrentPage(1)
+  }
 
   const handleFetchClients = async () =>
   {
-    const {clients,message, success} = await getClients()
+    const {clients,message, success} = await getClients('', 1, '', '', true)
     if(!success){
       toast.error(message)
       return
     }
 
     setClients(clients)
-   
   }  
+
   useEffect(() =>{
-  handleFetchClients();
+    handleFetchClients();
   }, [])
 
 
@@ -150,26 +130,40 @@ function OrderPage() {
       <input
         type="text"
         id="search-query"
-        value={searchQuery}
-        onChange={handleSearchQueryChange}
+        ref={searchRef}
         placeholder="Įveskite klientą"
       />
       <button onClick = {handleSearch}>Ieškoti</button></>: null}
         <label htmlFor="start-date">Pradžios data:</label>
-        <input type="date" id="start-date" value={startDate} onChange={handleStartDateChange} />
+        <input type="date" id="start-date" ref={startDateRef} />
 
         <label htmlFor="end-date">Pabaigos data:</label>
-        <input type="date" id="end-date" value={endDate} onChange={handleEndDateChange} />
+        <input type="date" id="end-date" ref={endDateRef} />
 
         <Button text="Filtruoti" onClick={handleFilterClick} />
         <Button text="Rodyti visus" onClick={handleShowAll} />
         {isCertificator?<Button text="Pridėti užsakymą" onClick={handleAddOrderClick} />:null}
       </div>
 
-      <OrderTable orders={orders} headers={headers} columnKeys = {columnKeys} setOrders={setOrders} updateOrder = {handleUpdateOrder} deleteOrder = {handleDeleteOrder} clients = {clients} />
+      <OrderTable
+        orders={orders}
+        headers={headers}
+        columnKeys={columnKeys}
+        setOrders={setOrders}
+        updateOrder={handleUpdateOrder}
+        deleteOrder={handleDeleteOrder}
+        clients={clients}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        nextPageExists={nextPageExists}
+      />
 
-      <AddOrderModal isOpen={isModalOpen} handleAddOrder={(newOrder)=>handleAddOrder(newOrder)} closeModal={()=>setIsModalOpen(false) } clients = {clients}></AddOrderModal>
-      
+      <AddOrderModal
+        isOpen={isModalOpen}
+        handleAddOrder={(newOrder) => handleAddOrder(newOrder)}
+        closeModal={() => setIsModalOpen(false)}
+        clients={clients}
+      ></AddOrderModal>
       </div>
   );
 }

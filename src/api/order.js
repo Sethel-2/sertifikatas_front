@@ -1,20 +1,20 @@
-export const getOrders = async (search) => {
+export const getOrders = async (search, page, from, to) => {
     try {
         const requestOptions = {
             method: "GET",
             headers: { "Content-Type": "application/json" },
             credentials: 'include',
         };
-        const response = await fetch(`http://localhost:3001/order?search=${search? search:""}`, requestOptions);
+        const response = await fetch(`http://localhost:3001/order?search=${search? search : ""}&page=${page}&from=${from}&to=${to}`, requestOptions);
         if (!response.ok) {
             const { message } = await response.json();
             throw new Error(message);
         }
-        const orders = await response.json();
-        return { orders, message: 'Success', success: true };
+        const { orders, nextPageExists } = await response.json();
+        return { orders, message: 'Success', success: true, nextPageExists };
     } catch (error) {
         console.error(error);
-        return { orders: [], message: error.message, success: false };
+        return { orders: [], message: error.message, success: false, nextPageExists: false };
     }
 }
 
